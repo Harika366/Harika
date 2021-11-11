@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#set subscription context
+az account set --subscription "Visual Studio Enterprise Subscription"
+
+#check if resource group exists
+$group = az group exists --name "test"
+
+if [ -z$group ]
+then
+    echo "resource group exists"
+else
+    echo "resource group doesnot exists"
+    az group create --name "test" --location "westeurope"
+fi
+
+#create virtual network
+$vnet = az network vnet list --query "[?contains(name, 'testvnet')]" 
+
+if [ -z$vnet]
+then
+    echo "vnet already exists"
+else
+    echo "vnet does not exist"
+    az network vnet create -g test -n testvnet --address-prefix 10.11.0.0/16    --subnet-name TestSubnet --subnet-prefix 10.11.0.0/24
+fi
